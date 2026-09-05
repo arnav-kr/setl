@@ -1,42 +1,31 @@
-# SETL: Razorpay Settlement Controller & Reconciliation Engine
+<p align="center">
+  <img src="./logo.svg" alt="SETL Logo" width="180" />
+</p>
 
-Automated 3-way financial reconciliation engine and AI-assisted exception auditing system built with React 18, Razorpay Blade Design System, TypeScript, Vite, and Google Gemini 3.6 Flash.
+<p align="center">
+  <strong>Automated 3-Way Financial Reconciliation & AI-Powered Exception Auditing</strong>
+</p>
+
+<p align="center">
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React 18" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-8.2-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="https://blade.razorpay.com/"><img src="https://img.shields.io/badge/Razorpay_Blade-12.121-02042B?style=flat-square&logo=razorpay&logoColor=3395FF" alt="Razorpay Blade" /></a>
+  <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Gemini_AI-3.6_Flash-8E75B2?style=flat-square&logo=google&logoColor=white" alt="Gemini AI" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License" /></a>
+</p>
 
 ---
 
 ## Overview
 
-SETL is a financial settlement reconciliation platform designed to automate the multi-way tie-out between **Merchant Order Ledgers**, **Razorpay Gateway Settlement Reports**, and **Bank Statement Credit Entries**.
+**SETL** is an enterprise financial settlement reconciliation platform designed to automate the multi-way tie-out between **Merchant Order Ledgers**, **Razorpay Gateway Settlement Reports**, and **Bank Statement Credit Entries**.
 
-The architecture uses a two-tier pipeline:
-1. **Deterministic Rule Engine**: Performs exact order, fee, tax, and bank UTR tie-outs across batch settlements.
-2. **Gemini 3.6 Flash AI Exception Engine**: Audits complex edge cases (such as chargeback clawbacks, partial reserve holds, MDR drift, and netted refunds) using strict JSON schema constraints and a risk-gated confidence threshold.
+It replaces error-prone spreadsheet macros with a two-tier reconciliation pipeline: a high-throughput **Deterministic Rule Engine** for exact financial tie-outs and a risk-gated **Gemini 3.6 Flash AI Engine** for auditing complex exceptions (chargeback clawbacks, reserve holds, fee drift, and netted refunds).
 
 ---
 
-## Key Features
-
-- **3-Way Automated Tie-Out Engine**  
-  Reconciles merchant orders, gateway payment entries (gross amount, MDR fees, GST tax, refunds, adjustments), and bank credits by UTR across batch settlements.
-
-- **AI Exception Auditing (Gemini 3.6 Flash)**  
-  Evaluates ambiguous discrepancies using strict JSON schema enforcement and a minimum 85% confidence threshold. Generates double-entry accounting recommendations (`Debit <Account> <Amount>, Credit <Account> <Amount>`) and concise audit trails.
-
-- **Razorpay Blade UI Integration**  
-  Built using official `@razorpay/blade` components, featuring animated SVG flow diagrams, interactive financial settlement bridges, exception exposure breakdowns, and theme integration.
-
-- **Integer Paise Financial Engine**  
-  All internal financial arithmetic is calculated in integer paise ($1\text{ INR} = 100\text{ Paise}$) to prevent floating-point rounding discrepancies across high-volume transaction datasets.
-
-- **Synthetic Data Generator & Edge Case Suite**  
-  Includes a built-in generator script (`npm run generate:demo-csv`) simulating real-world settlement breaks like Chargeback Clawbacks, MDR Spikes, GST Rounding, Partial Reserve Holds, and Batch Mismatches.
-
-- **Audit CSV Export & Local Workflow Persistence**  
-  Export complete review findings to CSV. Reviewer status decisions (`Open`, `In review`, `Resolved`) and audit notes persist locally across sessions.
-
----
-
-## Architecture & Pipeline Flow
+## Pipeline Flow
 
 ```
                            INPUT SOURCES
@@ -71,6 +60,28 @@ The architecture uses a two-tier pipeline:
                          │   (Minor Drift)   │               │ (Human Review)    │
                          └───────────────────┘               └───────────────────┘
 ```
+
+---
+
+## Key Features
+
+- **3-Way Automated Tie-Out Engine**  
+  Reconciles merchant orders, gateway payment entries (gross amount, MDR fees, GST tax, refunds, adjustments), and bank credits by UTR across batch settlements.
+
+- **AI Exception Auditing (Gemini 3.6 Flash)**  
+  Evaluates ambiguous discrepancies using strict JSON schema enforcement and a minimum **85% confidence threshold**. Generates double-entry accounting recommendations (`Debit <Account> <Amount>, Credit <Account> <Amount>`) and concise audit trails.
+
+- **Razorpay Blade UI Integration**  
+  Built using official `@razorpay/blade` components, featuring animated SVG flow diagrams, interactive financial settlement bridges, exception exposure breakdowns, and theme integration.
+
+- **Integer Paise Financial Engine**  
+  All internal financial arithmetic is calculated in integer paise ($1\text{ INR} = 100\text{ Paise}$) to prevent floating-point rounding discrepancies across high-volume transaction datasets.
+
+- **Synthetic Data Generator & Edge Case Suite**  
+  Includes a built-in generator script (`npm run generate:demo-csv`) simulating real-world settlement breaks like Chargeback Clawbacks, MDR Spikes, GST Rounding, Partial Reserve Holds, and Batch Mismatches.
+
+- **Audit CSV Export & Local Workflow Persistence**  
+  Export complete review findings to CSV. Reviewer status decisions (`Open`, `In review`, `Resolved`) and audit notes persist locally across sessions.
 
 ---
 
@@ -124,7 +135,7 @@ SETL categorizes transaction breaks into explicit root causes:
 
 | Command | Description |
 | :--- | :--- |
-| `npm run dev` | Starts Vite local development server. |
+| `npm run dev` | Starts Vite local development server (`http://localhost:5173`). |
 | `npm run build` | Compiles TypeScript (`tsc -b`) and builds production bundle (`vite build`). |
 | `npm run preview` | Previews the production build locally. |
 | `npm run lint` | Runs `oxlint` fast linter across project source files. |
@@ -154,6 +165,7 @@ setl/
 │   ├── types.ts                 # TypeScript domain interfaces & schemas
 │   ├── main.tsx                 # App entry point with Razorpay BladeProvider
 │   └── styles.css               # Flow map animation & Blade custom styles
+├── logo.svg                     # Official SETL logo asset
 ├── package.json                 # Dependency manifest
 ├── tsconfig.json                # TypeScript configuration
 └── vite.config.ts               # Vite configuration
