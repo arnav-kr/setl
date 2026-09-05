@@ -15,6 +15,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License" /></a>
 </p>
 
+<p align="center">
+  <img src="./demo.png" alt="SETL Reconciliation Dashboard Preview" width="100%" />
+</p>
+
 ---
 
 ## Overview
