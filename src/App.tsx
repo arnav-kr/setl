@@ -151,7 +151,9 @@ export default function App() {
             {showReview ? (
               <IconButton icon={ArrowLeftIcon} accessibilityLabel="Back to reconciliation" onClick={() => setShowReview(false)} />
             ) : (
-              <a className="setl-home-link" href="/" onClick={(event) => { event.preventDefault(); resetHome(); }}>SETL<span className="setl-mark">•</span></a>
+              <a className="setl-home-link" href="/" onClick={(event) => { event.preventDefault(); resetHome(); }}>
+                <img src="/logo.svg" alt="SETL" style={{ height: '24px', display: 'block' }} />
+              </a>
             )}
           </header>
           {showReview && run ? (
