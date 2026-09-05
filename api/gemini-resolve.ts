@@ -24,6 +24,22 @@ export default async function handler(request: VercelRequest, response: VercelRe
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      systemInstruction: {
+        parts: [{
+          text: [
+            'You are SETL AI, an expert financial reconciliation audit engine.',
+            'Analyze reconciliation exceptions strictly using the provided structured evidence.',
+            'RULES:',
+            '1. Output MUST strictly match the JSON response schema. Do not include markdown or external text.',
+            '2. "status" MUST be either "AI_RESOLVED" or "QUARANTINED".',
+            '3. Use "AI_RESOLVED" ONLY if evidence proves a deterministic root cause with confidence >= 0.85; otherwise use "QUARANTINED".',
+            '4. "root_cause" MUST be one of: "CHARGEBACK_CLAWBACK", "MISSING_PAYMENT", "PARTIAL_RESERVE_HOLD", "AMOUNT_MISMATCH", "MDR_FEE_VARIANCE", "GST_ROUNDING_VARIANCE", "REFUND_NETTED_WRONG_BATCH", "BATCH_TOTAL_MISMATCH", "DUPLICATE_REFERENCE", "ORPHAN_BANK_CREDIT", "UNKNOWN_EXCEPTION".',
+            '5. "suggested_entry" MUST follow double-entry format: "Debit <Account> <Amount>, Credit <Account> <Amount>".',
+            '6. Do not invent transaction facts or unverified amounts.',
+            '7. Keep audit_trail concise, professional, and strictly factual.',
+          ].join('\n'),
+        }],
+      },
       contents: [{ role: 'user', parts: [{ text: buildPrompt(exception) }] }],
       generationConfig: {
         responseMimeType: 'application/json',
@@ -32,7 +48,22 @@ export default async function handler(request: VercelRequest, response: VercelRe
           type: 'OBJECT',
           properties: {
             exception_id: { type: 'STRING' },
-            root_cause: { type: 'STRING' },
+            root_cause: {
+              type: 'STRING',
+              enum: [
+                'CHARGEBACK_CLAWBACK',
+                'MISSING_PAYMENT',
+                'PARTIAL_RESERVE_HOLD',
+                'AMOUNT_MISMATCH',
+                'MDR_FEE_VARIANCE',
+                'GST_ROUNDING_VARIANCE',
+                'REFUND_NETTED_WRONG_BATCH',
+                'BATCH_TOTAL_MISMATCH',
+                'DUPLICATE_REFERENCE',
+                'ORPHAN_BANK_CREDIT',
+                'UNKNOWN_EXCEPTION',
+              ],
+            },
             suggested_entry: { type: 'STRING' },
             confidence: { type: 'NUMBER' },
             audit_trail: { type: 'STRING' },
@@ -84,9 +115,24 @@ export default async function handler(request: VercelRequest, response: VercelRe
   try {
     const cleanedText = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
     const result = JSON.parse(cleanedText) as Record<string, unknown>;
+    const ALLOWED_ROOT_CAUSES = [
+      'CHARGEBACK_CLAWBACK',
+      'MISSING_PAYMENT',
+      'PARTIAL_RESERVE_HOLD',
+      'AMOUNT_MISMATCH',
+      'MDR_FEE_VARIANCE',
+      'GST_ROUNDING_VARIANCE',
+      'REFUND_NETTED_WRONG_BATCH',
+      'BATCH_TOTAL_MISMATCH',
+      'DUPLICATE_REFERENCE',
+      'ORPHAN_BANK_CREDIT',
+      'UNKNOWN_EXCEPTION',
+    ];
+
     if (
-      result.exception_id !== undefined && typeof result.exception_id !== 'string' ||
+      (result.exception_id !== undefined && typeof result.exception_id !== 'string') ||
       typeof result.root_cause !== 'string' ||
+      !ALLOWED_ROOT_CAUSES.includes(result.root_cause) ||
       typeof result.suggested_entry !== 'string' ||
       typeof result.audit_trail !== 'string' ||
       typeof result.confidence !== 'number' ||
