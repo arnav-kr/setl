@@ -1,0 +1,35 @@
+{
+  "name": "razorpay-settlement-controller",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "generate:demo-csv": "tsx scripts/generate-demo-csvs.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@razorpay/blade": "^12.111.0",
+    "@razorpay/i18nify-js": "^1.12.9",
+    "@razorpay/i18nify-react": "^4.0.12",
+    "framer-motion": "^11.18.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "styled-components": "^5.3.11"
+  },
+  "devDependencies": {
+    "@razorpay/blade-mcp": "^1.26.0",
+    "tsx": "^4.21.0",
+    "@types/node": "^24.13.3",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vercel/node": "^5.3.21",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2"
+  }
+}

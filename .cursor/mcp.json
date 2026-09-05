@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "blade-mcp": {
+      "command": "npx",
+      "args": ["-y", "@razorpay/blade-mcp@latest"]
+    }
+  }
+}
