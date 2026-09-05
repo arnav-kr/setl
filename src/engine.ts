@@ -204,6 +204,19 @@ export async function runExceptionPhaseAsync(unmatched: Exception[]): Promise<{ 
             evidence: buildExceptionEvidence(remainingException),
           })));
           break;
+        } else {
+          quarantined.push({
+            exception_id: exception.exception_id,
+            order_id: exception.order?.order_id,
+            reason: exception.reason,
+            reasoning: data?.error ? `AI analysis error: ${data.error}` : 'AI resolution request failed. Human finance review is required.',
+            confidence: 0,
+            delta_paise: exception.delta_paise,
+            customer_name: exception.order?.customer_ref,
+            vendor_name: exception.order?.vendor_name,
+            evidence: buildExceptionEvidence(exception),
+          });
+          continue;
         }
       }
     } catch (error) {

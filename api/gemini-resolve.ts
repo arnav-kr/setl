@@ -35,15 +35,15 @@ export default async function handler(request: VercelRequest, response: VercelRe
             '3. Use "AI_RESOLVED" ONLY if evidence proves a deterministic root cause with confidence >= 0.85; otherwise use "QUARANTINED".',
             '4. "root_cause" MUST be one of: "CHARGEBACK_CLAWBACK", "MISSING_PAYMENT", "PARTIAL_RESERVE_HOLD", "AMOUNT_MISMATCH", "MDR_FEE_VARIANCE", "GST_ROUNDING_VARIANCE", "REFUND_NETTED_WRONG_BATCH", "BATCH_TOTAL_MISMATCH", "DUPLICATE_REFERENCE", "ORPHAN_BANK_CREDIT", "UNKNOWN_EXCEPTION".',
             '5. "suggested_entry" MUST follow double-entry format: "Debit <Account> <Amount>, Credit <Account> <Amount>".',
-            '6. Do not invent transaction facts or unverified amounts.',
-            '7. Keep audit_trail concise, professional, and strictly factual.',
+            '6. "audit_trail" MUST be concise (maximum 2 sentences, under 60 words).',
+            '7. Do not invent transaction facts or unverified amounts.',
           ].join('\n'),
         }],
       },
       contents: [{ role: 'user', parts: [{ text: buildPrompt(exception) }] }],
       generationConfig: {
         responseMimeType: 'application/json',
-        maxOutputTokens: 1024,
+        maxOutputTokens: 2048,
         responseSchema: {
           type: 'OBJECT',
           properties: {
@@ -107,11 +107,6 @@ export default async function handler(request: VercelRequest, response: VercelRe
     return;
   }
 
-  if (candidate?.finishReason === 'MAX_TOKENS') {
-    response.status(502).json({ error: 'Gemini response was truncated due to output token limits.' });
-    return;
-  }
-
   try {
     const cleanedText = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
     const result = JSON.parse(cleanedText) as Record<string, unknown>;
@@ -144,6 +139,10 @@ export default async function handler(request: VercelRequest, response: VercelRe
     }
     response.status(200).json(result);
   } catch {
+    if (candidate?.finishReason === 'MAX_TOKENS') {
+      response.status(502).json({ error: 'Gemini response was truncated due to output token limits.' });
+      return;
+    }
     response.status(502).json({ error: 'Gemini returned malformed JSON.' });
   }
 }
