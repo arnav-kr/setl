@@ -11,25 +11,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@razorpay/blade": "^12.111.0",
+    "@razorpay/blade": "^12.121.1",
     "@razorpay/i18nify-js": "^1.12.9",
     "@razorpay/i18nify-react": "^4.0.12",
-    "framer-motion": "^11.18.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-hot-toast": "^2.4.1",
-    "styled-components": "^5.3.11"
+    "framer-motion": "^13.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hot-toast": "^2.6.0",
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@razorpay/blade-mcp": "^1.26.0",
-    "tsx": "^4.21.0",
-    "@types/node": "^24.13.3",
-    "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7",
-    "@vercel/node": "^5.3.21",
-    "@vitejs/plugin-react": "^6.1.0",
-    "oxlint": "^1.79.0",
-    "typescript": "~6.0.2",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@types/styled-components": "^5.1.36",
+    "@vercel/node": "^12.0.1",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
     "vite": "^8.2.2"
   }
 }
