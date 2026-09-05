@@ -27,7 +27,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
       contents: [{ role: 'user', parts: [{ text: buildPrompt(exception) }] }],
       generationConfig: {
         responseMimeType: 'application/json',
-        maxOutputTokens: 256,
+        maxOutputTokens: 1024,
         responseSchema: {
           type: 'OBJECT',
           properties: {
@@ -45,7 +45,10 @@ export default async function handler(request: VercelRequest, response: VercelRe
   });
 
   const payload = await upstream.json() as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    candidates?: Array<{
+      content?: { parts?: Array<{ text?: string }> };
+      finishReason?: string;
+    }>;
     error?: { message?: string; status?: string; details?: Array<{ reason?: string }> };
   };
   if (!upstream.ok) {
@@ -66,14 +69,21 @@ export default async function handler(request: VercelRequest, response: VercelRe
     return;
   }
 
-  const text = payload.candidates?.[0]?.content?.parts?.[0]?.text;
+  const candidate = payload.candidates?.[0];
+  const text = candidate?.content?.parts?.[0]?.text;
   if (!text) {
     response.status(502).json({ error: 'Gemini returned no structured resolution.' });
     return;
   }
 
+  if (candidate?.finishReason === 'MAX_TOKENS') {
+    response.status(502).json({ error: 'Gemini response was truncated due to output token limits.' });
+    return;
+  }
+
   try {
-    const result = JSON.parse(text) as Record<string, unknown>;
+    const cleanedText = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+    const result = JSON.parse(cleanedText) as Record<string, unknown>;
     if (
       result.exception_id !== undefined && typeof result.exception_id !== 'string' ||
       typeof result.root_cause !== 'string' ||
